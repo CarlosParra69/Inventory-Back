@@ -48,4 +48,20 @@ export class AuthController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+    // Obtener información del usuario autenticado
+    async getMe(req: Request, res: Response) {
+        try {
+            const userId = (req as any).user?.id;
+            
+            if (!userId) {
+                return res.status(401).json({ message: 'Usuario no autenticado' });
+            }
+
+            const user = await service.getMe(userId);
+            return res.status(200).json(user);
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
 }

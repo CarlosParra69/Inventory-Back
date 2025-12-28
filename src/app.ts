@@ -4,6 +4,7 @@ import productRoutes from './modules/products/routes/product.routes';
 import categoryRoutes from './modules/categories/routes/category.routes';
 import inventoryRoutes from './modules/inventory/routes/inventory.routes';
 import authRoutes from './modules/auth/routes/auth.routes';
+import auditRoutes from './modules/audits/routes/audit.route';
 import { errorHandler } from './shared/middlewares/error.middleware';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(errorHandler);
 
 // Rutas Principales
+app.use('/api/audits', auditRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/inventory', inventoryRoutes);

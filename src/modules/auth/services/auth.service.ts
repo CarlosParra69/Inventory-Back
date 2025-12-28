@@ -129,4 +129,15 @@ export class AuthService {
         if (!refreshToken) return;
         await this.repository.deleteRefreshToken(refreshToken);
     }
+
+    // Obtener información del usuario autenticado
+    async getMe(userId: string) {
+        const user = await this.repository.findUserById(userId);
+        
+        if (!user) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        return user;
+    }
 }

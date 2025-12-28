@@ -143,6 +143,59 @@ import { Router } from 'express';
  *                   type: string
  *                   example: Refresh token es requerido
  */
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Obtener información del usuario autenticado
+ *     description: >
+ *       Retorna la información del usuario actualmente autenticado.
+ *       Requiere un access token válido en el header Authorization.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Información del usuario obtenida correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: 9f2c3a12-1234-5678-9012-acdeff
+ *                 name:
+ *                   type: string
+ *                   example: Juan Pérez
+ *                 email:
+ *                   type: string
+ *                   example: juan@correo.com
+ *                 role:
+ *                   type: string
+ *                   example: user
+ *       401:
+ *         description: Usuario no autenticado o token inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Token no proporcionado
+ *       400:
+ *         description: Error al obtener información del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuario no encontrado
+ */
 
 
 export default Router();
