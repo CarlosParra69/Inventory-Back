@@ -25,7 +25,7 @@ export interface PaginatedMovements {
 
 export class MovementRepository {
   
-  private readonly LIMIT = 15;
+  private readonly LIMIT = 6;
 
   // Obtiene todos los movimientos con paginación
   async findAll(page: number): Promise<PaginatedMovements> {

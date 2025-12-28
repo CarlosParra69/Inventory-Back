@@ -28,7 +28,7 @@ export interface PaginatedAudits {
 
 export class AuditRepository {
     
-    private readonly LIMIT = 15;
+    private readonly LIMIT = 6;
 
     // Busca todas las auditorías con paginación
     async findAll(page: number): Promise<PaginatedAudits> {
