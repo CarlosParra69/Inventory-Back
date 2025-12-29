@@ -10,6 +10,9 @@ export class InventoryController{
         try{
             const { productId, quantity, reason } = req.body;
             const movement = await service.registerEntry(productId, quantity, reason);
+            res.locals.audit = {
+                resourceId: movement.id
+            };
             res.status(201).json(movement);
         } catch (error: any) {
             res.status(400).json({ message: error.message });
@@ -21,6 +24,9 @@ export class InventoryController{
         try {
             const { productId, quantity, reason } = req.body;
             const movement = await service.registerExit(productId, quantity, reason);
+            res.locals.audit = {
+                resourceId: movement.id
+            };
             res.status(201).json(movement);
         } catch (error: any) {
             res.status(400).json({ message: error.message });

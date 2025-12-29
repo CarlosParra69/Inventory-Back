@@ -29,6 +29,7 @@ export class CategoryService {
         if(!category){
             throw new Error('Categoria no encontrada para actualizar');
         }
+        return category;
     }
 
     // Elimina una categoria por su ID (soft delete)

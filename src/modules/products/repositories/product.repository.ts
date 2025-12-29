@@ -43,14 +43,14 @@ export class ProductRepository {
     }
 
     async update(id: string, data: Partial<Product>): Promise<Product | null> {
-        const { rows } = await pool.query(
-            `UPDATE products 
-             SET name = $1, description = $2 
-             WHERE id = $3 AND deleted_at IS NULL 
-             RETURNING *`,
-            [data.name, data.description, id]
-        );
-        return rows[0] || null;
+    const { rows } = await pool.query(
+        `UPDATE products 
+         SET name = $1, description = $2, sku = $3, category_id = $4
+         WHERE id = $5 AND deleted_at IS NULL 
+         RETURNING *`,
+        [data.name, data.description, data.sku, data.category_id, id]
+    );
+    return rows[0] || null;
     }
 
     // Soft delete: marca un producto como eliminado

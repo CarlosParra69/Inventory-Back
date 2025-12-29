@@ -4,7 +4,7 @@ import pool from '../database/postgres';
 export function audit(action: string, resource: string) {
     return async (req: Request, res: Response, next: NextFunction) => {
         res.on('finish', async () => {
-            if (!req.user) return;
+            if (!req.user?.id) return;
 
             const resourceId =
                 res.locals.audit?.resourceId ??

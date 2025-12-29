@@ -34,6 +34,9 @@ export class CategoryController {
     async update(req: Request, res: Response) {
         try {
             const category = await service.update(req.params.id, req.body);
+            res.locals.audit = {
+                resourceId: category.id
+            };
             res.json(category);
         } catch (error: any) {
             res.status(404).json({ message: error.message });
@@ -43,12 +46,18 @@ export class CategoryController {
     // Eliminar una categoría por ID (soft delete)
     async delete (req: Request, res: Response) {
         await service.delete(req.params.id);
+        res.locals.audit = {
+            resourceId: req.params.id
+        };
         res.status(204).send();
     }
 
     // Restaurar una categoría eliminada
     async restore(req: Request, res: Response) {
         await service.restore(req.params.id);
+        res.locals.audit = {
+            resourceId: req.params.id
+        };
         res.status(200).json({ message: 'Categoría restaurada exitosamente' });
     }
 }
