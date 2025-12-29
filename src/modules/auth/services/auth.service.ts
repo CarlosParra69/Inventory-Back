@@ -35,7 +35,7 @@ export class AuthService {
         });
 
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 7);
+        expiresAt.setDate(expiresAt.getDate() + 1);
 
         await this.repository.saveRefreshToken(
             user.id,
@@ -108,7 +108,7 @@ export class AuthService {
 
     const newRefreshToken = generateRefreshToken({ sub: user.id });
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    expiresAt.setDate(expiresAt.getDate() + 1);
 
     await this.repository.rotateRefreshToken(
         refreshToken,
