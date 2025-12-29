@@ -32,7 +32,7 @@ export class MovementRepository {
     const offset = (page - 1) * this.LIMIT;
     
     const { rows: movements } = await pool.query(
-      `SELECT id, product_id, movement_type, quantity, reason, created_at 
+      `SELECT id, product_id, TRIM(movement_type) as movement_type, quantity, reason, created_at 
        FROM inventory_movements 
        ORDER BY created_at DESC 
        LIMIT $1 OFFSET $2`,
@@ -64,7 +64,7 @@ export class MovementRepository {
     const offset = (page - 1) * this.LIMIT;
 
     const { rows: movements } = await pool.query(
-      `SELECT id, product_id, movement_type, quantity, reason, created_at 
+      `SELECT id, product_id, TRIM(movement_type) as movement_type, quantity, reason, created_at 
        FROM inventory_movements 
        WHERE product_id = $1
        ORDER BY created_at DESC 
@@ -98,16 +98,16 @@ export class MovementRepository {
     const offset = (page - 1) * this.LIMIT;
 
     const { rows: movements } = await pool.query(
-      `SELECT id, product_id, movement_type, quantity, reason, created_at 
+      `SELECT id, product_id, TRIM(movement_type) as movement_type, quantity, reason, created_at 
        FROM inventory_movements 
-       WHERE movement_type = 'IN'
+       WHERE TRIM(movement_type) = 'IN'
        ORDER BY created_at DESC 
        LIMIT $1 OFFSET $2`,
       [this.LIMIT, offset]
     );
 
     const { rows: countResult } = await pool.query(
-      `SELECT COUNT(*) as count FROM inventory_movements WHERE movement_type = 'IN'`
+      `SELECT COUNT(*) as count FROM inventory_movements WHERE TRIM(movement_type) = 'IN'`
     );
 
     const total = parseInt(countResult[0].count);
@@ -131,16 +131,16 @@ export class MovementRepository {
     const offset = (page - 1) * this.LIMIT;
 
     const { rows: movements } = await pool.query(
-      `SELECT id, product_id, movement_type, quantity, reason, created_at 
+      `SELECT id, product_id, TRIM(movement_type) as movement_type, quantity, reason, created_at 
        FROM inventory_movements 
-       WHERE movement_type = 'OUT'
+       WHERE TRIM(movement_type) = 'OUT'
        ORDER BY created_at DESC 
        LIMIT $1 OFFSET $2`,
       [this.LIMIT, offset]
     );
 
     const { rows: countResult } = await pool.query(
-      `SELECT COUNT(*) as count FROM inventory_movements WHERE movement_type = 'OUT'`
+      `SELECT COUNT(*) as count FROM inventory_movements WHERE TRIM(movement_type) = 'OUT'`
     );
 
     const total = parseInt(countResult[0].count);
@@ -178,8 +178,12 @@ export class MovementRepository {
           }
         }
 
+        // Normalizar movement_type eliminando espacios en blanco
+        const normalizedMovementType = (movement.movement_type?.trim() || movement.movement_type) as 'IN' | 'OUT';
+
         return {
           ...movement,
+          movement_type: normalizedMovementType,
           productName
         };
       })

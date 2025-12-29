@@ -149,6 +149,8 @@ export class AuditRepository {
                 }
 
                 // Obtener nombre del recurso según su tipo
+                // Nota: Incluimos registros eliminados (soft delete) para auditorías históricas
+                // No usamos WHERE deleted_at IS NULL para poder ver recursos eliminados en auditorías
                 if (audit.resource_id && audit.resource) {
                     try {
                         let query = '';
@@ -156,29 +158,43 @@ export class AuditRepository {
 
                         switch (audit.resource) {
                             case 'CATEGORY':
+                                // Buscar categoría incluso si fue eliminada (para auditorías históricas)
                                 query = `SELECT name FROM categories WHERE id = $1`;
                                 break;
                             case 'PRODUCT':
+                                // Buscar producto incluso si fue eliminado (para auditorías históricas)
                                 query = `SELECT name FROM products WHERE id = $1`;
                                 break;
                             case 'USER':
                                 query = `SELECT name FROM users WHERE id = $1`;
                                 break;
+                            case 'INVENTORY_MOVEMENT':
+                                // Para movimientos de inventario, podemos mostrar el ID o buscar información relacionada
+                                query = `SELECT CONCAT('Movimiento #', id::text) as name FROM inventory_movements WHERE id = $1`;
+                                break;
                         }
 
                         if (query) {
                             const resourceResult = await pool.query(query, params);
-                            resourceName = resourceResult.rows[0]?.name;
+                            if (resourceResult.rows.length > 0 && resourceResult.rows[0].name) {
+                                resourceName = resourceResult.rows[0].name;
+                            } else {
+                                // Si no se encuentra el recurso, podría haber sido eliminado físicamente
+                                // En ese caso, mostramos un indicador
+                                resourceName = `[Eliminado]`;
+                            }
                         }
                     } catch (error) {
-                        console.error(`Error fetching resource name: ${error}`);
+                        console.error(`Error fetching resource name for ${audit.resource} (${audit.resource_id}): ${error}`);
+                        // Si hay un error, intentamos al menos mostrar que hubo un problema
+                        resourceName = `[Error al obtener nombre]`;
                     }
                 }
 
                 return {
                     ...audit,
                     userName,
-                    resourceName
+                    resourceName: resourceName || undefined
                 };
             })
         );
