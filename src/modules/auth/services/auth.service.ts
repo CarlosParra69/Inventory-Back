@@ -69,11 +69,42 @@ export class AuthService {
 
         const password_hash = await bcrypt.hash(password, 10);
 
-        return this.repository.createUser(
+        const user = await this.repository.createUser(
             name,
             email,
             password_hash
         );
+
+        // Generar tokens después de crear el usuario
+        const accessToken = generateAccessToken({
+            sub: user.id,
+            email: user.email,
+            role: user.role
+        });
+
+        const refreshToken = generateRefreshToken({
+            sub: user.id
+        });
+
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 1);
+
+        await this.repository.saveRefreshToken(
+            user.id,
+            refreshToken,
+            expiresAt
+        );
+
+        return {
+            accessToken,
+            refreshToken,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        };
     }
 
     // Refresh Token con Rotacion
