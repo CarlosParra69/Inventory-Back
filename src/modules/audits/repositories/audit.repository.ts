@@ -168,6 +168,14 @@ export class AuditRepository {
                             case 'USER':
                                 query = `SELECT name FROM users WHERE id = $1`;
                                 break;
+                            case 'INVENTORY':
+                                // Para recursos INVENTORY, el resource_id es el ID del movimiento
+                                // Obtenemos el nombre del producto relacionado con ese movimiento
+                                query = `SELECT p.name 
+                                         FROM inventory_movements im
+                                         INNER JOIN products p ON im.product_id = p.id
+                                         WHERE im.id = $1`;
+                                break;
                             case 'INVENTORY_MOVEMENT':
                                 // Para movimientos de inventario, podemos mostrar el ID o buscar información relacionada
                                 query = `SELECT CONCAT('Movimiento #', id::text) as name FROM inventory_movements WHERE id = $1`;
